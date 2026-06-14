@@ -1,0 +1,25 @@
+# 隐私和安全配置
+
+privacy:
+  deidentification:
+    enabled: true
+    sensitive_fields:
+      - "patient_name"
+      - "patient_id_number"
+      - "phone_number"
+      - "email"
+      - "home_address"
+  
+  encryption:
+    enabled: true
+    algorithm: "AES"
+    key_length: 256
+  
+  audit_log:
+    enabled: true
+    retention_days: 365
+  
+  compliance:
+    standards:
+      - "HIPAA"
+      - "GDPR"

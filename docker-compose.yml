@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+  # PostgreSQL 数据库
+  postgres:
+    image: postgres:15
+    container_name: medical-postgres
+    environment:
+      POSTGRES_USER: medical_user
+      POSTGRES_PASSWORD: medical_password
+      POSTGRES_DB: medical_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - medical-network
+
+  # Kafka
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: medical-zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    networks:
+      - medical-network
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: medical-kafka
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+    ports:
+      - "9092:9092"
+    networks:
+      - medical-network
+
+  # Redis (缓存)
+  redis:
+    image: redis:7-alpine
+    container_name: medical-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - medical-network
+
+  # Grafana (可视化)
+  grafana:
+    image: grafana/grafana:10.0.0
+    container_name: medical-grafana
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - medical-network
+
+volumes:
+  postgres_data:
+  grafana_data:
+
+networks:
+  medical-network:
+    driver: bridge

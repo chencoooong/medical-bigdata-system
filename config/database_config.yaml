@@ -1,0 +1,31 @@
+# 数据库配置文件
+
+database:
+  postgresql:
+    host: "localhost"
+    port: 5432
+    database: "medical_db"
+    user: "medical_user"
+    password: "medical_password"
+    pool_size: 20
+  
+  redis:
+    host: "localhost"
+    port: 6379
+    db: 0
+
+data_warehouse:
+  ods:
+    database: "medical_db"
+    schema: "ods"
+    retention_days: 90
+  
+  dwd:
+    database: "medical_db"
+    schema: "dwd"
+    retention_days: 365
+  
+  dws:
+    database: "medical_db"
+    schema: "dws"
+    retention_days: 1825
